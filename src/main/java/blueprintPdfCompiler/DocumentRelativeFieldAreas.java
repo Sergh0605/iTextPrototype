@@ -1,0 +1,92 @@
+package blueprintPdfCompiler;
+
+import com.itextpdf.layout.properties.TextAlignment;
+
+public enum DocumentRelativeFieldAreas {
+    MainCodeInFirstPage(-125, 50, 120, 10, TextAlignment.CENTER, 7, true, false),
+    MainCodeInSecondPage(-125, 5, 120, 15, TextAlignment.CENTER, 7, false, true),
+    AdditionalCode(90, -5, 70, 7, TextAlignment.CENTER, 4f, true, true),
+    PageNumberInFirstPage(-40, 20, 15, 10, TextAlignment.CENTER, 4f, true, false),
+    PageNumberInSecondPage(-15, 5, 10, 8, TextAlignment.CENTER, 4f, false, true),
+    TotalPagesCountInFirstPage(-25, 20, 20, 10, TextAlignment.CENTER, 4f, true, false),
+    Stage(-55, 20, 15, 10, TextAlignment.CENTER, 5f, true, false),
+    ProjectName(-125, 35, 120, 15, TextAlignment.CENTER, 4f, true, false),
+    Address(-125, 20, 70, 15, TextAlignment.CENTER, 3.5f, true, false),
+    DocumentName(-125, 5, 70, 15, TextAlignment.CENTER, 5, true, false),
+    CompanyName(-55, 5, 50, 15, TextAlignment.CENTER, 4f, true, false),
+    Designer(-170, 30, 20, 5, TextAlignment.LEFT, 4.0f, true, false),
+    Supervisor(-170, 25, 20, 5, TextAlignment.LEFT, 4f, true, false),
+    ChiefEngineer(-170, 15, 20, 5, TextAlignment.LEFT, 4f, true, false),
+    Controller(-170, 10, 20, 5, TextAlignment.LEFT, 4f, true, false),
+    SmallMainCodeInFirstPage(-125, 30, 120, 15, TextAlignment.CENTER, 7f, true, false),
+    SmallPageNumberInFirstPage(-40, 20, 15, 5, TextAlignment.CENTER, 4f, true, false),
+    SmallTotalPagesCountInFirstPage(-25, 20, 20, 5, TextAlignment.CENTER, 4f, true, false),
+    SmallStage(-55, 20, 15, 5, TextAlignment.CENTER, 4f, true, false),
+    SmallDocumentName(-125, 5, 70, 25, TextAlignment.CENTER, 4f, true, false),
+    SmallDesigner(-170, 25, 20, 5, TextAlignment.LEFT, 4f, true, false),
+    SmallSupervisor(-170, 20, 20, 5, TextAlignment.LEFT, 4f, true, false),
+    DesignerDate(-135, 30, 10, 5, TextAlignment.CENTER, 4f, true, false),
+    SupervisorDate(-135, 25, 10, 5, TextAlignment.CENTER, 4f, true, false),
+    ChiefEngineerDate(-135, 15, 10, 5, TextAlignment.CENTER, 4f, true, false),
+    ControllerDate(-135, 10, 10, 5, TextAlignment.CENTER, 4f, true, false),
+    SmallDesignerDate(-135, 25, 10, 5, TextAlignment.CENTER, 4f, true, false),
+    SmallSupervisorDate(-135, 20, 10, 5, TextAlignment.CENTER, 4f, true, false),
+    DesignerSign(-150, 30, 15, 5, TextAlignment.CENTER, 4f, true, false),
+    SupervisorSign(-150, 25, 15, 5, TextAlignment.CENTER, 4f, true, false),
+    ChiefEngineerSign(-150, 15, 15, 5, TextAlignment.CENTER, 4f, true, false),
+    ControllerSign(-150, 10, 15, 5, TextAlignment.CENTER, 4f, true, false),
+    SmallDesignerSign(-150, 25, 15, 5, TextAlignment.CENTER, 4f, true, false),
+    SmallSupervisorSign(-150, 20, 15, 5, TextAlignment.CENTER, 4f, true, false);
+
+    private final float x;
+    private final float y;
+    private final float width;
+    private final float height;
+    private final float fontSize;
+    private final TextAlignment alignment;
+    private final boolean visibleOnFirstPage;
+    private final boolean visibleOnSecondPage;
+
+    DocumentRelativeFieldAreas(float xInMm, float yInMm, float widthInMm, float heightInMm, TextAlignment alignment, float fontSizeInMm, boolean visibleOnFirstPage, boolean visibleOnSecondPage) {
+        this.x = PdfUtils.millimetersToPoints(xInMm + PdfUtils.getFieldAreaCorrection());
+        this.y = PdfUtils.millimetersToPoints(yInMm + PdfUtils.getFieldAreaCorrection());
+        this.width = PdfUtils.millimetersToPoints(widthInMm - 2 * PdfUtils.getFieldAreaCorrection());
+        this.height = PdfUtils.millimetersToPoints(heightInMm - 2 * PdfUtils.getFieldAreaCorrection());
+        this.fontSize = PdfUtils.millimetersToPoints(fontSizeInMm);
+        this.alignment = alignment;
+        this.visibleOnFirstPage = visibleOnFirstPage;
+        this.visibleOnSecondPage = visibleOnSecondPage;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
+    public float getFontSize() {
+        return fontSize;
+    }
+
+    public TextAlignment getAlignment() {
+        return alignment;
+    }
+
+    public boolean isVisibleOnFirstPage() {
+        return visibleOnFirstPage;
+    }
+
+    public boolean isVisibleOnSecondPage() {
+        return visibleOnSecondPage;
+    }
+}
