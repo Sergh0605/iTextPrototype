@@ -1,4 +1,4 @@
-package blueprintPdfCompiler;
+package documentGenerator;
 
 import com.itextpdf.layout.properties.TextAlignment;
 

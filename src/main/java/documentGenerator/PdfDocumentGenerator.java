@@ -1,4 +1,4 @@
-package blueprintPdfCompiler;
+package documentGenerator;
 
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.font.PdfFont;
@@ -12,23 +12,21 @@ import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
 
-import static blueprintPdfCompiler.PdfUtils.millimetersToPoints;
+import static documentGenerator.PdfUtils.millimetersToPoints;
 
 public class PdfDocumentGenerator {
     private File pdfBlueprint;
-    private byte[] outputPdfDocument;
+    private final byte[] pdfDocumentInBytes;
     private final String GostA = "./src/main/resources/font/GOST_type.ttf";
     private final PdfFont mainFont = PdfFontFactory.createFont(GostA, "Identity-H", PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
 
-    public PdfDocumentGenerator(File pdfBlueprint) throws IOException {
-        if (pdfBlueprint.isFile() && pdfBlueprint.getName().endsWith(".pdf")) {
-            this.pdfBlueprint = pdfBlueprint;
-        }
+    public PdfDocumentGenerator(byte[] pdfDocumentInBytes) throws Exception {
+        this.pdfDocumentInBytes = pdfDocumentInBytes;
     }
 
     private Map<Rectangle, Integer> getFieldAreasInTitleBlockOnPageOfDocument(PdfDocument pdfDocument, DocumentRelativeFieldAreas relativeFieldArea) {
@@ -66,30 +64,35 @@ public class PdfDocumentGenerator {
         return fieldArea;
     }
 
-    public byte[] getFilledBlueprintDocumentTitleBlock(@NotNull DocumentTitleBlock inputStamp) throws IOException {
+    public PdfDocumentGenerator getFilledBlueprintDocumentTitleBlock(@NotNull DocumentTitleBlock inputStamp) throws Exception {
         return getFilledDocumentTitleBlock(getRelativeFieldAreasWithDataForBlueprintDocumentTitleBlock(inputStamp));
     }
 
-    public byte[] getFilledTextDocumentTitleBlock(@NotNull DocumentTitleBlock inputStamp) throws IOException {
+    public PdfDocumentGenerator getFilledTextDocumentTitleBlock(@NotNull DocumentTitleBlock inputStamp) throws Exception {
         return getFilledDocumentTitleBlock(getRelativeFieldAreasWithDataForTextDocumentTitleBlock(inputStamp));
     }
 
-    public byte[] getFilledTableDocumentTitleBlock(@NotNull DocumentTitleBlock inputStamp) throws IOException {
+    public PdfDocumentGenerator getFilledTableDocumentTitleBlock(@NotNull DocumentTitleBlock inputStamp) throws Exception {
         return getFilledDocumentTitleBlock(getRelativeFieldAreasWithDataForTableDocumentTitleBlock(inputStamp));
     }
 
-    private byte[] getFilledDocumentTitleBlock(Map<DocumentRelativeFieldAreas, Object> relativeFieldAreasWithData) throws IOException {
-        File outputFile = new File(pdfBlueprint.getParent() + "\\filled_" + pdfBlueprint.getName());
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(pdfBlueprint), new PdfWriter(outputFile));
-        List<Paragraph> filledFieldsOfDocument = new ArrayList<>();
-        Document document = new Document(pdfDoc);
-        relativeFieldAreasWithData.forEach((x, y) -> {
-            filledFieldsOfDocument.addAll(getTitleBlockFilledFields(y, x, pdfDoc));
-        });
-        filledFieldsOfDocument.forEach(document::add);
-        document.close();
+    private PdfDocumentGenerator getFilledDocumentTitleBlock(Map<DocumentRelativeFieldAreas, Object> relativeFieldAreasWithData) throws Exception {
+        try (PdfReader reader = new PdfReader(new ByteArrayInputStream(pdfDocumentInBytes));
+             ByteArrayOutputStream os = new ByteArrayOutputStream();
+             PdfWriter writer = new PdfWriter(os);
+             PdfDocument pdfDoc = new PdfDocument(reader, writer);
+             Document document = new Document(pdfDoc)) {
+            List<Paragraph> filledFieldsOfDocument = new ArrayList<>();
+            relativeFieldAreasWithData.forEach((x, y) -> {
+                filledFieldsOfDocument.addAll(getTitleBlockFilledFields(y, x, pdfDoc));
+            });
+            filledFieldsOfDocument.forEach(document::add);
+            document.close();
+            return new PdfDocumentGenerator(os.toByteArray());
+        } catch (Exception e) {
+            throw e;
+        }
 
-        return new byte[0];
     }
 
     private Map<DocumentRelativeFieldAreas, Object> getRelativeFieldAreasWithDataForBlueprintDocumentTitleBlock(DocumentTitleBlock stamp) {
@@ -239,12 +242,7 @@ public class PdfDocumentGenerator {
         return filledFields;
     }
 
-    public File getPdfBlueprint() {
-        return pdfBlueprint;
+    public byte[] getPdfDocumentInBytes() {
+        return pdfDocumentInBytes;
     }
-
-    public void setPdfBlueprint(File pdfBlueprint) {
-        this.pdfBlueprint = pdfBlueprint;
-    }
-
 }

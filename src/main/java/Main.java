@@ -1,29 +1,31 @@
-import blueprintPdfCompiler.DocumentCompany;
-import blueprintPdfCompiler.DocumentTitleBlock;
-import blueprintPdfCompiler.PdfDocumentGenerator;
+import documentGenerator.DocumentCompany;
+import documentGenerator.DocumentTitleBlock;
+import documentGenerator.PdfDocumentGenerator;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         String pathToInputFile = "./src/main/resources/A4-first-p.pdf";
         String pathToTwoBigPagesPdf = "./src/main/resources/A4big2.pdf";
         String pathToTwoSmallPagesPdf = "./src/main/resources/A4Small2.pdf";
-        File inputTemplate = new File(pathToInputFile);
-        File inputTemplate2 = new File(pathToTwoBigPagesPdf);
-        File inputTemplate3 = new File(pathToTwoSmallPagesPdf);
+        String output1 = "./src/main/resources/filled_A4-first-p.pdf";
+        String output2 = "./src/main/resources/filled_A4big2.pdf";
+        String output3 = "./src/main/resources/filled_A4Small2.pdf";
+        byte[] inputTemplate = Files.readAllBytes(Paths.get(pathToInputFile));
+        byte[] inputTemplate2 = Files.readAllBytes(Paths.get(pathToTwoBigPagesPdf));
+        byte[] inputTemplate3 = Files.readAllBytes(Paths.get(pathToTwoSmallPagesPdf));
 
-        PdfDocumentGenerator blueprint = new PdfDocumentGenerator(inputTemplate);
-        blueprint.getFilledTableDocumentTitleBlock(getStamp());
+        PdfDocumentGenerator generator1 = new PdfDocumentGenerator(inputTemplate);
+        Files.write(Paths.get(output1), generator1.getFilledTableDocumentTitleBlock(getStamp()).getPdfDocumentInBytes());
 
-        PdfDocumentGenerator blueprint2 = new PdfDocumentGenerator(inputTemplate2);
-        blueprint2.getFilledBlueprintDocumentTitleBlock(getStamp());
+        PdfDocumentGenerator generator2 = new PdfDocumentGenerator(inputTemplate2);
+        Files.write(Paths.get(output2), generator2.getFilledBlueprintDocumentTitleBlock(getStamp()).getPdfDocumentInBytes());
 
-        PdfDocumentGenerator blueprint3 = new PdfDocumentGenerator(inputTemplate3);
-        blueprint3.getFilledTextDocumentTitleBlock(getStamp());
+        PdfDocumentGenerator generator3 = new PdfDocumentGenerator(inputTemplate3);
+        Files.write(Paths.get(output3), generator3.getFilledTextDocumentTitleBlock(getStamp()).getPdfDocumentInBytes());
     }
 
     public static DocumentTitleBlock getStamp() throws IOException {

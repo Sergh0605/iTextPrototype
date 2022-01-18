@@ -1,4 +1,4 @@
-package blueprintPdfCompiler;
+package documentGenerator;
 
 import java.util.Arrays;
 import java.util.Objects;

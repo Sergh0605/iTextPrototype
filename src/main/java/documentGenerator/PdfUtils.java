@@ -1,4 +1,4 @@
-package blueprintPdfCompiler;
+package documentGenerator;
 
 public class PdfUtils {
     public static float millimetersToPoints(float valueInMillimeters) {
