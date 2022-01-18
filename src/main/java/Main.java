@@ -11,9 +11,9 @@ public class Main {
         String pathToInputFile = "./src/main/resources/A4-first-p.pdf";
         String pathToTwoBigPagesPdf = "./src/main/resources/A4big2.pdf";
         String pathToTwoSmallPagesPdf = "./src/main/resources/A4Small2.pdf";
-        String output1 = "./src/main/resources/filled_A4-first-p.pdf";
-        String output2 = "./src/main/resources/filled_A4big2.pdf";
-        String output3 = "./src/main/resources/filled_A4Small2.pdf";
+        String output1 = "./target/filled_A4-first-p.pdf";
+        String output2 = "./target/filled_A4big2.pdf";
+        String output3 = "./target/filled_A4Small2.pdf";
         byte[] inputTemplate = Files.readAllBytes(Paths.get(pathToInputFile));
         byte[] inputTemplate2 = Files.readAllBytes(Paths.get(pathToTwoBigPagesPdf));
         byte[] inputTemplate3 = Files.readAllBytes(Paths.get(pathToTwoSmallPagesPdf));
