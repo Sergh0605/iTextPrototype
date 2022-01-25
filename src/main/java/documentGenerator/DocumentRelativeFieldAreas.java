@@ -3,8 +3,8 @@ package documentGenerator;
 import com.itextpdf.layout.properties.TextAlignment;
 
 public enum DocumentRelativeFieldAreas {
-    MainCodeInFirstPage(-125, 50, 120, 10, TextAlignment.CENTER, 7, true, false),
-    MainCodeInSecondPage(-125, 5, 120, 15, TextAlignment.CENTER, 7, false, true),
+    MainCodeInFirstPage(-125, 50, 120, 10, TextAlignment.CENTER, 7f, true, false),
+    MainCodeInSecondPage(-125, 5, 120, 15, TextAlignment.CENTER, 7f, false, true),
     AdditionalCode(90, -5, 70, 7, TextAlignment.CENTER, 4f, true, true),
     PageNumberInFirstPage(-40, 20, 15, 10, TextAlignment.CENTER, 4f, true, false),
     PageNumberInSecondPage(-15, 5, 10, 8, TextAlignment.CENTER, 4f, false, true),
@@ -36,7 +36,14 @@ public enum DocumentRelativeFieldAreas {
     ChiefEngineerSign(-150, 15, 15, 5, TextAlignment.CENTER, 4f, true, false),
     ControllerSign(-150, 10, 15, 5, TextAlignment.CENTER, 4f, true, false),
     SmallDesignerSign(-150, 25, 15, 5, TextAlignment.CENTER, 4f, true, false),
-    SmallSupervisorSign(-150, 20, 15, 5, TextAlignment.CENTER, 4f, true, false);
+    SmallSupervisorSign(-150, 20, 15, 5, TextAlignment.CENTER, 4f, true, false),
+    CoverCompanyName(-190, 275, 180, 15, TextAlignment.CENTER, 8f, true,false),
+    CoverProjectName(-190, 200, 180, 30, TextAlignment.CENTER, 8f, true,false),
+    CoverVolumeName(-190, 170, 180, 30, TextAlignment.CENTER, 8f, true, false),
+    CoverStage(-190,150, 180, 15, TextAlignment.CENTER, 10f, true,false),
+    CoverVolumeNumber(-190,130,180,15, TextAlignment.CENTER, 10f, true,false),
+    CoverVolumeCode(-190, 100, 180,20, TextAlignment.CENTER, 12f, true,false),
+    CoverBottom(-190, 5, 180, 10, TextAlignment.CENTER, 5f, true,true);
 
     private final float x;
     private final float y;

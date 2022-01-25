@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class DocumentTitleBlock {
-    private String blueprintCode;
-    private String blueprintName;
+    private String documentCode;
+    private String documentName;
     private String designerName;
     private byte[] designerSign;
     private String supervisorName;
@@ -14,15 +14,33 @@ public class DocumentTitleBlock {
     private byte[] controllerSign;
     private String chiefEngineerName;
     private byte[] chiefEngineerSign;
-    private String stageCode;
+    private String stage;
     private String projectName;
     private String objectAddress;
     private String releaseDate;
     private DocumentCompany company;
+    private int volumeNumber;
+    private String volumeName;
 
-    public DocumentTitleBlock(String blueprintCode, String blueprintName, String designerName, byte[] designerSign, String supervisorName, byte[] supervisorSign, String controllerName, byte[] controllerSign, String chiefEngineerName, byte[] chiefEngineerSign, String stageCode, String projectName, String objectAddress, String releaseDate, DocumentCompany company) {
-        this.blueprintCode = blueprintCode;
-        this.blueprintName = blueprintName;
+    public int getVolumeNumber() {
+        return volumeNumber;
+    }
+
+    public void setVolumeNumber(int volumeNumber) {
+        this.volumeNumber = volumeNumber;
+    }
+
+    public String getVolumeName() {
+        return volumeName;
+    }
+
+    public void setVolumeName(String volumeName) {
+        this.volumeName = volumeName;
+    }
+
+    public DocumentTitleBlock(String documentCode, String documentName, String designerName, byte[] designerSign, String supervisorName, byte[] supervisorSign, String controllerName, byte[] controllerSign, String chiefEngineerName, byte[] chiefEngineerSign, String stage, String projectName, String objectAddress, String releaseDate, DocumentCompany company, int volumeNumber, String volumeName) {
+        this.documentCode = documentCode;
+        this.documentName = documentName;
         this.designerName = designerName;
         this.designerSign = designerSign;
         this.supervisorName = supervisorName;
@@ -31,24 +49,25 @@ public class DocumentTitleBlock {
         this.controllerSign = controllerSign;
         this.chiefEngineerName = chiefEngineerName;
         this.chiefEngineerSign = chiefEngineerSign;
-        this.stageCode = stageCode;
+        this.stage = stage;
         this.projectName = projectName;
         this.objectAddress = objectAddress;
         this.releaseDate = releaseDate;
         this.company = company;
+        this.volumeNumber = volumeNumber;
+        this.volumeName = volumeName;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DocumentTitleBlock)) return false;
-        DocumentTitleBlock that = (DocumentTitleBlock) o;
-        return Objects.equals(blueprintCode, that.blueprintCode) && Objects.equals(blueprintName, that.blueprintName) && Objects.equals(designerName, that.designerName) && Arrays.equals(designerSign, that.designerSign) && Objects.equals(supervisorName, that.supervisorName) && Arrays.equals(supervisorSign, that.supervisorSign) && Objects.equals(controllerName, that.controllerName) && Arrays.equals(controllerSign, that.controllerSign) && Objects.equals(chiefEngineerName, that.chiefEngineerName) && Arrays.equals(chiefEngineerSign, that.chiefEngineerSign) && Objects.equals(stageCode, that.stageCode) && Objects.equals(projectName, that.projectName) && Objects.equals(objectAddress, that.objectAddress) && Objects.equals(releaseDate, that.releaseDate) && Objects.equals(company, that.company);
+        if (!(o instanceof DocumentTitleBlock that)) return false;
+        return Objects.equals(documentCode, that.documentCode) && Objects.equals(documentName, that.documentName) && Objects.equals(designerName, that.designerName) && Arrays.equals(designerSign, that.designerSign) && Objects.equals(supervisorName, that.supervisorName) && Arrays.equals(supervisorSign, that.supervisorSign) && Objects.equals(controllerName, that.controllerName) && Arrays.equals(controllerSign, that.controllerSign) && Objects.equals(chiefEngineerName, that.chiefEngineerName) && Arrays.equals(chiefEngineerSign, that.chiefEngineerSign) && Objects.equals(stage, that.stage) && Objects.equals(projectName, that.projectName) && Objects.equals(objectAddress, that.objectAddress) && Objects.equals(releaseDate, that.releaseDate) && Objects.equals(company, that.company);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(blueprintCode, blueprintName, designerName, supervisorName, controllerName, chiefEngineerName, stageCode, projectName, objectAddress, releaseDate, company);
+        int result = Objects.hash(documentCode, documentName, designerName, supervisorName, controllerName, chiefEngineerName, stage, projectName, objectAddress, releaseDate, company);
         result = 31 * result + Arrays.hashCode(designerSign);
         result = 31 * result + Arrays.hashCode(supervisorSign);
         result = 31 * result + Arrays.hashCode(controllerSign);
@@ -56,20 +75,20 @@ public class DocumentTitleBlock {
         return result;
     }
 
-    public String getBlueprintCode() {
-        return blueprintCode;
+    public String getDocumentCode() {
+        return documentCode;
     }
 
-    public void setBlueprintCode(String blueprintCode) {
-        this.blueprintCode = blueprintCode;
+    public void setDocumentCode(String documentCode) {
+        this.documentCode = documentCode;
     }
 
-    public String getBlueprintName() {
-        return blueprintName;
+    public String getDocumentName() {
+        return documentName;
     }
 
-    public void setBlueprintName(String blueprintName) {
-        this.blueprintName = blueprintName;
+    public void setDocumentName(String documentName) {
+        this.documentName = documentName;
     }
 
     public String getDesignerName() {
@@ -136,12 +155,12 @@ public class DocumentTitleBlock {
         this.chiefEngineerSign = chiefEngineerSign;
     }
 
-    public String getStageCode() {
-        return stageCode;
+    public String getStage() {
+        return stage;
     }
 
-    public void setStageCode(String stageCode) {
-        this.stageCode = stageCode;
+    public void setStage(String stage) {
+        this.stage = stage;
     }
 
     public String getProjectName() {

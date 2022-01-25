@@ -13,16 +13,14 @@ import com.itextpdf.layout.properties.VerticalAlignment;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
 
 import static documentGenerator.PdfUtils.millimetersToPoints;
 
 public class PdfDocumentGenerator {
-    private File pdfBlueprint;
     private final byte[] pdfDocumentInBytes;
-    private final String GostA = "./src/main/resources/font/GOST_type.ttf";
+    private final String GostA = "./src/main/resources/font/GOST_type_A_1.ttf";
     private final PdfFont mainFont = PdfFontFactory.createFont(GostA, "Identity-H", PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
 
     public PdfDocumentGenerator(byte[] pdfDocumentInBytes) throws Exception {
@@ -65,18 +63,22 @@ public class PdfDocumentGenerator {
     }
 
     public PdfDocumentGenerator getFilledBlueprintDocumentTitleBlock(@NotNull DocumentTitleBlock inputStamp) throws Exception {
-        return getFilledDocumentTitleBlock(getRelativeFieldAreasWithDataForBlueprintDocumentTitleBlock(inputStamp));
+        return getFilledDocument(getRelativeFieldAreasWithDataForBlueprintDocumentTitleBlock(inputStamp));
     }
 
     public PdfDocumentGenerator getFilledTextDocumentTitleBlock(@NotNull DocumentTitleBlock inputStamp) throws Exception {
-        return getFilledDocumentTitleBlock(getRelativeFieldAreasWithDataForTextDocumentTitleBlock(inputStamp));
+        return getFilledDocument(getRelativeFieldAreasWithDataForTextDocumentTitleBlock(inputStamp));
     }
 
     public PdfDocumentGenerator getFilledTableDocumentTitleBlock(@NotNull DocumentTitleBlock inputStamp) throws Exception {
-        return getFilledDocumentTitleBlock(getRelativeFieldAreasWithDataForTableDocumentTitleBlock(inputStamp));
+        return getFilledDocument(getRelativeFieldAreasWithDataForTableDocumentTitleBlock(inputStamp));
     }
 
-    private PdfDocumentGenerator getFilledDocumentTitleBlock(Map<DocumentRelativeFieldAreas, Object> relativeFieldAreasWithData) throws Exception {
+    public PdfDocumentGenerator getFilledCoverDocument(@NotNull DocumentTitleBlock inputStamp) throws Exception {
+        return getFilledDocument(getRelativeFieldAreasWithDataForCoverDocument(inputStamp));
+    }
+
+    private PdfDocumentGenerator getFilledDocument(Map<DocumentRelativeFieldAreas, Object> relativeFieldAreasWithData) throws Exception {
         try (PdfReader reader = new PdfReader(new ByteArrayInputStream(pdfDocumentInBytes));
              ByteArrayOutputStream os = new ByteArrayOutputStream();
              PdfWriter writer = new PdfWriter(os);
@@ -97,16 +99,16 @@ public class PdfDocumentGenerator {
 
     private Map<DocumentRelativeFieldAreas, Object> getRelativeFieldAreasWithDataForBlueprintDocumentTitleBlock(DocumentTitleBlock stamp) {
         Map<DocumentRelativeFieldAreas, Object> relativeFieldAreasWithData = getRelativeFieldAreasWithDataForTableDocumentTitleBlock(stamp);
-        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.AdditionalCode, stamp.getBlueprintCode());
+        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.AdditionalCode, stamp.getDocumentCode());
         return relativeFieldAreasWithData;
     }
 
     private Map<DocumentRelativeFieldAreas, Object> getRelativeFieldAreasWithDataForTextDocumentTitleBlock(DocumentTitleBlock stamp) {
         Map<DocumentRelativeFieldAreas, Object> relativeFieldAreasWithData = new HashMap<>();
-        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.SmallMainCodeInFirstPage, stamp.getBlueprintCode());
-        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.MainCodeInSecondPage, stamp.getBlueprintCode());
-        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.AdditionalCode, stamp.getBlueprintCode());
-        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.SmallDocumentName, stamp.getBlueprintName());
+        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.SmallMainCodeInFirstPage, stamp.getDocumentCode());
+        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.MainCodeInSecondPage, stamp.getDocumentCode());
+        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.AdditionalCode, stamp.getDocumentCode());
+        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.SmallDocumentName, stamp.getDocumentName());
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.SmallPageNumberInFirstPage, "");
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.PageNumberInSecondPage, "");
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.SmallTotalPagesCountInFirstPage, "");
@@ -114,7 +116,7 @@ public class PdfDocumentGenerator {
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.Controller, stamp.getControllerName());
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.ChiefEngineer, stamp.getChiefEngineerName());
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.SmallSupervisor, stamp.getSupervisorName());
-        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.SmallStage, stamp.getStageCode());
+        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.SmallStage, stamp.getStage());
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.CompanyName, stamp.getCompany());
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.SmallDesignerDate, stamp.getReleaseDate());
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.SmallSupervisorDate, stamp.getReleaseDate());
@@ -129,9 +131,9 @@ public class PdfDocumentGenerator {
 
     private Map<DocumentRelativeFieldAreas, Object> getRelativeFieldAreasWithDataForTableDocumentTitleBlock(DocumentTitleBlock stamp) {
         Map<DocumentRelativeFieldAreas, Object> relativeFieldAreasWithData = new HashMap<>();
-        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.MainCodeInFirstPage, stamp.getBlueprintCode());
-        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.MainCodeInSecondPage, stamp.getBlueprintCode());
-        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.DocumentName, stamp.getBlueprintName());
+        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.MainCodeInFirstPage, stamp.getDocumentCode());
+        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.MainCodeInSecondPage, stamp.getDocumentCode());
+        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.DocumentName, stamp.getDocumentName());
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.Address, stamp.getObjectAddress());
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.ProjectName, stamp.getProjectName());
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.PageNumberInFirstPage, "");
@@ -141,7 +143,7 @@ public class PdfDocumentGenerator {
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.Controller, stamp.getControllerName());
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.ChiefEngineer, stamp.getChiefEngineerName());
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.Supervisor, stamp.getSupervisorName());
-        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.Stage, stamp.getStageCode());
+        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.Stage, stamp.getStage());
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.CompanyName, stamp.getCompany());
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.DesignerDate, stamp.getReleaseDate());
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.SupervisorDate, stamp.getReleaseDate());
@@ -151,7 +153,22 @@ public class PdfDocumentGenerator {
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.SupervisorSign, stamp.getSupervisorSign());
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.ChiefEngineerSign, stamp.getChiefEngineerSign());
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.ControllerSign, stamp.getControllerSign());
+        return relativeFieldAreasWithData;
+    }
 
+    private Map<DocumentRelativeFieldAreas, Object> getRelativeFieldAreasWithDataForCoverDocument(DocumentTitleBlock stamp) {
+        Map<DocumentRelativeFieldAreas, Object> relativeFieldAreasWithData = new HashMap<>();
+        if (stamp.getCompany() != null) {
+            if (stamp.getCompany().getCity() != null && stamp.getReleaseDate() != null) {
+                relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.CoverBottom, stamp.getCompany().getCity() + " " + stamp.getReleaseDate());
+            }
+            relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.CoverCompanyName, stamp.getCompany().getName().toUpperCase(Locale.ROOT));
+        }
+        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.CoverProjectName, stamp.getProjectName());
+        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.CoverVolumeName, stamp.getVolumeName());
+        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.CoverStage, stamp.getStage().toUpperCase(Locale.ROOT));
+        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.CoverVolumeNumber, "Том " + stamp.getVolumeNumber());
+        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.CoverVolumeCode, stamp.getDocumentCode());
         return relativeFieldAreasWithData;
     }
 
@@ -180,8 +197,8 @@ public class PdfDocumentGenerator {
 
     private List<Paragraph> getTitleBlockFilledFields(
             Object content,
-            @NotNull DocumentRelativeFieldAreas fieldArea,
-            @NotNull PdfDocument pdfDocument) {
+            DocumentRelativeFieldAreas fieldArea,
+            PdfDocument pdfDocument) {
         List<Paragraph> filledFields = new ArrayList<>();
         if (content != null) {
             String textForParagraph = "";
@@ -204,8 +221,8 @@ public class PdfDocumentGenerator {
                         .setPageNumber(areaOnPage.getValue());
                 if (fieldArea.equals(DocumentRelativeFieldAreas.CompanyName)) {
                     if (!(content instanceof DocumentCompany company)) throw new AssertionError();
-                    if (company.getSign() != null) {
-                        image = new Image(ImageDataFactory.create(company.getSign()))
+                    if (company.getLogo() != null) {
+                        image = new Image(ImageDataFactory.create(company.getLogo()))
                                 .setAutoScale(true)
                                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
                         paragraph.add(image);
@@ -232,7 +249,7 @@ public class PdfDocumentGenerator {
                 Text text = new Text(textForParagraph)
                         .setFont(mainFont)
                         .setFontSize(fieldArea.getFontSize())
-                        .setHorizontalScaling(0.9f)
+                        .setHorizontalScaling(1f)
                         .setItalic()
                         .setTextRise(millimetersToPoints(-0.3f));
                 paragraph.add(text);
@@ -245,4 +262,5 @@ public class PdfDocumentGenerator {
     public byte[] getPdfDocumentInBytes() {
         return pdfDocumentInBytes;
     }
+
 }
