@@ -43,7 +43,17 @@ public enum DocumentRelativeFieldAreas {
     CoverStage(-190,150, 180, 15, TextAlignment.CENTER, 10f, true,false),
     CoverVolumeNumber(-190,130,180,15, TextAlignment.CENTER, 10f, true,false),
     CoverVolumeCode(-190, 100, 180,20, TextAlignment.CENTER, 12f, true,false),
-    CoverBottom(-190, 5, 180, 10, TextAlignment.CENTER, 5f, true,true);
+    CoverBottom(-190, 5, 180, 10, TextAlignment.CENTER, 5f, true,true),
+    TitleListProjectName(-180, 185, 165, 30, TextAlignment.CENTER, 8f, true,false),
+    TitleListStage(-180, 165, 165, 15, TextAlignment.CENTER, 8f, true,false),
+    TitleListVolumeName(-180, 130, 165, 30, TextAlignment.CENTER, 8f, true,false),
+    TitleListVolumeCode(-180, 110, 165, 15, TextAlignment.CENTER, 8f, true,false),
+    TitleListSignerPosition(-96, 65, 90, 6, TextAlignment.CENTER, 5f, true,false),
+    TitleListSignerCompany(-96, 60, 90, 6, TextAlignment.CENTER, 5f, true,false),
+    TitleListSignerName(-85, 47, 70, 6, TextAlignment.RIGHT, 5f, true,false),
+    TitleListExecutorSignDate(-85, 37, 70, 6, TextAlignment.RIGHT, 5f, true,false),
+    TitleListApproveSignDate(-85, 256, 70, 6, TextAlignment.RIGHT, 5f, true,false),
+    TitleListAgreeSignDate(-162, 37, 52, 6, TextAlignment.RIGHT, 5f, true,false);
 
     private final float x;
     private final float y;

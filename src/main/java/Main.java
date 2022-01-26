@@ -12,14 +12,17 @@ public class Main {
         String pathToTwoBigPagesPdf = "./src/main/resources/A4big2.pdf";
         String pathToTwoSmallPagesPdf = "./src/main/resources/A4Small2.pdf";
         String pathToCoverTemplate = "./src/main/resources/PDF_Templates/A4CoverTemplate.pdf";
+        String pathToTitleListTemplate = "./src/main/resources/PDF_Templates/A4TitleListTemplate.pdf";
         String output1 = "./target/filled_A4-first-p.pdf";
         String output2 = "./target/filled_A4big2.pdf";
         String output3 = "./target/filled_A4Small2.pdf";
         String output4 = "./target/filled_A4Cover.pdf";
+        String output5 = "./target/filled_A4TitleList.pdf";
         byte[] inputTemplate = Files.readAllBytes(Paths.get(pathToInputFile));
         byte[] inputTemplate2 = Files.readAllBytes(Paths.get(pathToTwoBigPagesPdf));
         byte[] inputTemplate3 = Files.readAllBytes(Paths.get(pathToTwoSmallPagesPdf));
         byte[] inputTemplate4 = Files.readAllBytes(Paths.get(pathToCoverTemplate));
+        byte[] inputTemplate5 = Files.readAllBytes(Paths.get(pathToTitleListTemplate));
 
         PdfDocumentGenerator generator1 = new PdfDocumentGenerator(inputTemplate);
         Files.write(Paths.get(output1), generator1.getFilledTableDocumentTitleBlock(getStampForDocs()).getPdfDocumentInBytes());
@@ -31,7 +34,10 @@ public class Main {
         Files.write(Paths.get(output3), generator3.getFilledTextDocumentTitleBlock(getStampForDocs()).getPdfDocumentInBytes());
 
         PdfDocumentGenerator generator4 = new PdfDocumentGenerator(inputTemplate4);
-        Files.write(Paths.get(output4), generator4.getFilledCoverDocument(getStampForCover()).getPdfDocumentInBytes());
+        Files.write(Paths.get(output4), generator4.getFilledA4CoverDocument(getStampForCover()).getPdfDocumentInBytes());
+
+        PdfDocumentGenerator generator5 = new PdfDocumentGenerator(inputTemplate5);
+        Files.write(Paths.get(output5), generator5.getFilledA4TitleListDocument(getStampForCover()).getPdfDocumentInBytes());
     }
 
     public static DocumentTitleBlock getStampForDocs() throws IOException {

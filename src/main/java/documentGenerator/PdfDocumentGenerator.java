@@ -74,8 +74,12 @@ public class PdfDocumentGenerator {
         return getFilledDocument(getRelativeFieldAreasWithDataForTableDocumentTitleBlock(inputStamp));
     }
 
-    public PdfDocumentGenerator getFilledCoverDocument(@NotNull DocumentTitleBlock inputStamp) throws Exception {
+    public PdfDocumentGenerator getFilledA4CoverDocument(@NotNull DocumentTitleBlock inputStamp) throws Exception {
         return getFilledDocument(getRelativeFieldAreasWithDataForCoverDocument(inputStamp));
+    }
+
+    public PdfDocumentGenerator getFilledA4TitleListDocument(@NotNull DocumentTitleBlock inputStamp) throws Exception {
+        return getFilledDocument(getRelativeFieldAreasWithDataForTitleListDocument(inputStamp));
     }
 
     private PdfDocumentGenerator getFilledDocument(Map<DocumentRelativeFieldAreas, Object> relativeFieldAreasWithData) throws Exception {
@@ -169,6 +173,24 @@ public class PdfDocumentGenerator {
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.CoverStage, stamp.getStage().toUpperCase(Locale.ROOT));
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.CoverVolumeNumber, "Том " + stamp.getVolumeNumber());
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.CoverVolumeCode, stamp.getDocumentCode());
+        return relativeFieldAreasWithData;
+    }
+
+    private Map<DocumentRelativeFieldAreas, Object> getRelativeFieldAreasWithDataForTitleListDocument(DocumentTitleBlock stamp) {
+        Map<DocumentRelativeFieldAreas, Object> relativeFieldAreasWithData = new HashMap<>();
+        if (stamp.getCompany() != null) {
+                relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.TitleListSignerPosition, stamp.getCompany().getSignerPosition());
+                relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.TitleListSignerName, stamp.getCompany().getSignerName());
+                relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.TitleListSignerCompany, stamp.getCompany().getName());
+            }
+        String releaseYear = stamp.getReleaseDate() + "г.";
+        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.TitleListAgreeSignDate, releaseYear);
+        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.TitleListApproveSignDate, releaseYear);
+        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.TitleListExecutorSignDate, releaseYear);
+        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.TitleListProjectName, stamp.getProjectName());
+        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.TitleListVolumeCode, stamp.getDocumentCode());
+        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.TitleListStage, stamp.getStage().toUpperCase(Locale.ROOT));
+        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.TitleListVolumeName, String.format("Том %d. %s", stamp.getVolumeNumber(), stamp.getVolumeName()));
         return relativeFieldAreasWithData;
     }
 
