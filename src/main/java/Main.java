@@ -1,21 +1,25 @@
 import documentGenerator.DocumentCompany;
 import documentGenerator.DocumentTitleBlock;
 import documentGenerator.PdfDocumentGenerator;
+import documentGenerator.RowOfContentsDocument;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws Exception {
         String pathToInputFile = "./src/main/resources/A4-first-p.pdf";
         String pathToTwoBigPagesPdf = "./src/main/resources/A4big2.pdf";
-        String pathToTwoSmallPagesPdf = "./src/main/resources/A4Small2.pdf";
+        String pathToTwoSmallPagesPdf = "./src/main/resources/PDF_Templates/A4TextTemplate.pdf";
+        String pathToA4SecondPageTemplatePdf = "./src/main/resources/PDF_Templates/A4SecondPageTextTemplate.pdf";
         String pathToCoverTemplate = "./src/main/resources/PDF_Templates/A4CoverTemplate.pdf";
         String pathToTitleListTemplate = "./src/main/resources/PDF_Templates/A4TitleListTemplate.pdf";
         String output1 = "./target/filled_A4-first-p.pdf";
         String output2 = "./target/filled_A4big2.pdf";
-        String output3 = "./target/filled_A4Small2.pdf";
+        String output3 = "./target/filled_A4Contents.pdf";
         String output4 = "./target/filled_A4Cover.pdf";
         String output5 = "./target/filled_A4TitleList.pdf";
         byte[] inputTemplate = Files.readAllBytes(Paths.get(pathToInputFile));
@@ -23,6 +27,7 @@ public class Main {
         byte[] inputTemplate3 = Files.readAllBytes(Paths.get(pathToTwoSmallPagesPdf));
         byte[] inputTemplate4 = Files.readAllBytes(Paths.get(pathToCoverTemplate));
         byte[] inputTemplate5 = Files.readAllBytes(Paths.get(pathToTitleListTemplate));
+        byte[] inputTemplate6 = Files.readAllBytes(Paths.get(pathToA4SecondPageTemplatePdf));
 
         PdfDocumentGenerator generator1 = new PdfDocumentGenerator(inputTemplate);
         Files.write(Paths.get(output1), generator1.getFilledTableDocumentTitleBlock(getStampForDocs()).getPdfDocumentInBytes());
@@ -31,7 +36,7 @@ public class Main {
         Files.write(Paths.get(output2), generator2.getFilledBlueprintDocumentTitleBlock(getStampForDocs()).getPdfDocumentInBytes());
 
         PdfDocumentGenerator generator3 = new PdfDocumentGenerator(inputTemplate3);
-        Files.write(Paths.get(output3), generator3.getFilledTextDocumentTitleBlock(getStampForDocs()).getPdfDocumentInBytes());
+        Files.write(Paths.get(output3), generator3.getFilledContentsDocument(getContents(), inputTemplate6).getFilledTextDocumentTitleBlock(getStampForDocs()).getPdfDocumentInBytes());
 
         PdfDocumentGenerator generator4 = new PdfDocumentGenerator(inputTemplate4);
         Files.write(Paths.get(output4), generator4.getFilledA4CoverDocument(getStampForCover()).getPdfDocumentInBytes());
@@ -106,6 +111,15 @@ public class Main {
                 company,
                 volumeNumber,
                 volumeName);
+    }
+
+    public static List<RowOfContentsDocument> getContents() {
+        RowOfContentsDocument row = new RowOfContentsDocument("181022/ДР-МУП-ОС.1", "Создание системы обнаружения и фиксации", "");
+        List<RowOfContentsDocument> rows = new ArrayList<>();
+        for (int i = 0; i < 8; i++) {
+            rows.add(row);
+        }
+        return rows;
     }
 
 }

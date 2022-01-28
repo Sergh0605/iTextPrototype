@@ -1,14 +1,18 @@
 package documentGenerator;
 
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import org.jetbrains.annotations.NotNull;
 
@@ -82,6 +86,94 @@ public class PdfDocumentGenerator {
         return getFilledDocument(getRelativeFieldAreasWithDataForTitleListDocument(inputStamp));
     }
 
+    public PdfDocumentGenerator getFilledContentsDocument(List<RowOfContentsDocument> rowsOfDocument, byte[] secondPageTemplate) throws Exception {
+        int countOfNewPages = getCountOfNewPages(getFilledTableForContentsDocument(rowsOfDocument));
+        byte[] documentWithAddedPages = getDocumentWithAddedPages(countOfNewPages, secondPageTemplate);
+        try (PdfReader reader = new PdfReader(new ByteArrayInputStream(documentWithAddedPages));
+             ByteArrayOutputStream os = new ByteArrayOutputStream();
+             PdfWriter writer = new PdfWriter(os);
+             PdfDocument pdfDoc = new PdfDocument(reader, writer);
+             Document document = new Document(pdfDoc)) {
+                document.setRenderer(new A4TextDocumentRenderer(document));
+                document.add(getFilledTableForContentsDocument(rowsOfDocument));
+                document.close();
+            return new PdfDocumentGenerator(os.toByteArray());
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    private byte[] getDocumentWithAddedPages(int countOfAddedPages, byte[] pageTemplate) throws Exception {
+        try (PdfReader reader = new PdfReader(new ByteArrayInputStream(pdfDocumentInBytes));
+             PdfReader templateReader = new PdfReader(new ByteArrayInputStream(pageTemplate));
+             ByteArrayOutputStream os = new ByteArrayOutputStream();
+             PdfWriter writer = new PdfWriter(os);
+             PdfDocument pdfDoc = new PdfDocument(reader, writer.setSmartMode(true));
+             PdfDocument templatePdfDoc = new PdfDocument(templateReader)) {
+            if (pdfDoc.getNumberOfPages() == 1 && templatePdfDoc.getNumberOfPages() == 1) {
+                int templatePageNumber = templatePdfDoc.getNumberOfPages();
+                for (int i = 0; i < countOfAddedPages; i++) {
+                    templatePdfDoc.copyPagesTo(templatePageNumber, templatePageNumber, pdfDoc);
+                }
+                pdfDoc.close();
+                return os.toByteArray();
+            } else throw new Exception();
+
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    private int getCountOfNewPages(IBlockElement element) throws Exception {
+        try (PdfReader reader = new PdfReader(new ByteArrayInputStream(pdfDocumentInBytes));
+             ByteArrayOutputStream os = new ByteArrayOutputStream();
+             PdfWriter writer = new PdfWriter(os);
+             PdfDocument pdfDoc = new PdfDocument(reader, writer);
+             Document document = new Document(pdfDoc)) {
+            if (pdfDoc.getNumberOfPages() > 0) {
+                CustomDocumentHandler handler = new CustomDocumentHandler();
+                pdfDoc.addEventHandler(PdfDocumentEvent.START_PAGE, handler);
+                document.setRenderer(new A4TextDocumentRenderer(document));
+                document.add(element);
+                document.close();
+                return handler.getCountOfNewPages();
+            } else throw new Exception();
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    private Table getFilledTableForContentsDocument(List<RowOfContentsDocument> rowsOfDocument) throws IOException {
+        float[] columnWidth = {millimetersToPoints(60), millimetersToPoints(95), millimetersToPoints(30)};
+        Table table = new Table(UnitValue.createPointArray(columnWidth));
+        Cell[] header = new Cell[]{
+                getContentsCell("Обозначение").setMinHeight(millimetersToPoints(15)).setFontSize(millimetersToPoints(5)),
+                getContentsCell("Наименование").setMinHeight(millimetersToPoints(15)).setFontSize(millimetersToPoints(5)),
+                getContentsCell("Примечание").setMinHeight(millimetersToPoints(15)).setFontSize(millimetersToPoints(5))
+        };
+        for (Cell h : header) {
+            table.addHeaderCell(h);
+        }
+        for (RowOfContentsDocument rowOfContentsDocument : rowsOfDocument) {
+            table.addCell(getContentsCell(rowOfContentsDocument.getColumn1()));
+            table.addCell(getContentsCell(rowOfContentsDocument.getColumn2()).setTextAlignment(TextAlignment.LEFT));
+            table.addCell(getContentsCell(rowOfContentsDocument.getColumn3()));
+        }
+        return table;
+    }
+
+    private Cell getContentsCell(String cellContent) throws IOException {
+        PdfFont localFont = PdfFontFactory.createFont(GostA, "Identity-H", PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
+        return new Cell()
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setFont(localFont)
+                .setFontSize(millimetersToPoints(3))
+                .setMinHeight(millimetersToPoints(8))
+                .setBorder(new SolidBorder(ColorConstants.BLACK, millimetersToPoints(0.25f)))
+                .add(new Paragraph(cellContent).setItalic());
+    }
+
     private PdfDocumentGenerator getFilledDocument(Map<DocumentRelativeFieldAreas, Object> relativeFieldAreasWithData) throws Exception {
         try (PdfReader reader = new PdfReader(new ByteArrayInputStream(pdfDocumentInBytes));
              ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -111,7 +203,6 @@ public class PdfDocumentGenerator {
         Map<DocumentRelativeFieldAreas, Object> relativeFieldAreasWithData = new HashMap<>();
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.SmallMainCodeInFirstPage, stamp.getDocumentCode());
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.MainCodeInSecondPage, stamp.getDocumentCode());
-        relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.AdditionalCode, stamp.getDocumentCode());
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.SmallDocumentName, stamp.getDocumentName());
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.SmallPageNumberInFirstPage, "");
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.PageNumberInSecondPage, "");
@@ -179,10 +270,10 @@ public class PdfDocumentGenerator {
     private Map<DocumentRelativeFieldAreas, Object> getRelativeFieldAreasWithDataForTitleListDocument(DocumentTitleBlock stamp) {
         Map<DocumentRelativeFieldAreas, Object> relativeFieldAreasWithData = new HashMap<>();
         if (stamp.getCompany() != null) {
-                relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.TitleListSignerPosition, stamp.getCompany().getSignerPosition());
-                relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.TitleListSignerName, stamp.getCompany().getSignerName());
-                relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.TitleListSignerCompany, stamp.getCompany().getName());
-            }
+            relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.TitleListSignerPosition, stamp.getCompany().getSignerPosition());
+            relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.TitleListSignerName, stamp.getCompany().getSignerName());
+            relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.TitleListSignerCompany, stamp.getCompany().getName());
+        }
         String releaseYear = stamp.getReleaseDate() + "г.";
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.TitleListAgreeSignDate, releaseYear);
         relativeFieldAreasWithData.put(DocumentRelativeFieldAreas.TitleListApproveSignDate, releaseYear);
